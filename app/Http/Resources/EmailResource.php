@@ -38,7 +38,7 @@ class EmailResource extends JsonResource
             'spam_score' => $this->spam_score,
             'formatted_date' => $this->formatted_date,
             'timestamp' => $this->timestamp,
-            'raw_text' => $this->when($request->has('include_content'), $this->raw_text),
+            'raw_text' => $this->raw_text,
             'email' => $this->email,
             'links' => [
                 'self' => route('emails.show', $this->id),
