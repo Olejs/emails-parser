@@ -21,6 +21,15 @@ use Illuminate\Foundation\Http\FormRequest;
  */
 class StoreEmailRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        if (!$this->has('raw_text')) {
+            $this->merge([
+                'raw_text' => '',
+            ]);
+        }
+    }
+
     /**
      * Get the validation rules
      */
@@ -38,6 +47,7 @@ class StoreEmailRequest extends FormRequest
             'sender_ip' => ['nullable', 'ip'],
             'to' => ['required', 'string'],
             'timestamp' => ['required', 'integer', 'min:0'],
+            'raw_text' => ['required', 'string'],
         ];
     }
 }

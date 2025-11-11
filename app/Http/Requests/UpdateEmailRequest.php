@@ -22,6 +22,15 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateEmailRequest extends FormRequest
 {
+    protected function prepareForValidation(): void
+    {
+        if (!$this->has('raw_text')) {
+            $this->merge([
+                'raw_text' => '',
+            ]);
+        }
+    }
+
     public function rules(): array
     {
         return [
@@ -33,10 +42,10 @@ class UpdateEmailRequest extends FormRequest
             'SPF' => ['nullable', 'string', 'max:255'],
             'spam_score' => ['nullable', 'numeric', 'min:0', 'max:100'],
             'email' => ['sometimes', 'string'],
-            'raw_text' => ['sometimes', 'string'],
             'sender_ip' => ['nullable', 'ip'],
             'to' => ['sometimes', 'string'],
             'timestamp' => ['sometimes', 'integer', 'min:0'],
+            'raw_text' => ['required', 'string'],
         ];
     }
 }
