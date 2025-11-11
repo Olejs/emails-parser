@@ -1,59 +1,378 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Email Parser API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based API for parsing, storing, and managing email data with advanced text extraction capabilities.
 
-## About Laravel
+## 🔗 Repository
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+[https://github.com/Olejs/emails-parser](https://github.com/Olejs/emails-parser)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 📋 Table of Contents
 
-## Learning Laravel
+- [Installation](#installation)
+- [Running the Application](#running-the-application)
+- [API Endpoints](#api-endpoints)
+    - [Authentication](#authentication)
+    - [Store Email](#store-email)
+    - [Read Email](#read-email)
+    - [Update Email](#update-email)
+- [Request Examples](#request-examples)
+- [Response Examples](#response-examples)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🚀 Installation
 
-## Laravel Sponsors
+### Prerequisites
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- PHP >= 8.1
+- Composer
+- MySQL/PostgreSQL database
 
-### Premium Partners
+### Setup Steps
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Olejs/emails-parser.git
+   cd emails-parser
+   ```
 
-## Contributing
+2. **Install dependencies**
+   ```bash
+   composer install
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. **Configure environment**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-## Code of Conduct
+4. **Configure database in `.env`**
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=your_database
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+5. **Run migrations**
+   ```bash
+   php artisan migrate
+   ```
 
-## Security Vulnerabilities
+---
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🏃 Running the Application
 
-## License
+### Local Development Server
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Start the Laravel development server:
+
+```bash
+php artisan serve
+```
+
+The application will be available at `http://localhost:8000`
+
+### Production Server
+
+For production deployment, configure your web server (Nginx/Apache) to point to the `public` directory.
+
+---
+
+## 🔌 API Endpoints
+
+Base URL: `http://142.93.189.58:8000/api`
+
+### Authentication
+
+#### Login
+
+Authenticate and receive an access token.
+
+**Endpoint:** `POST /auth/login`
+
+**Headers:**
+```
+Content-Type: application/json
+Accept: application/json
+```
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "password": "your_password"
+}
+```
+
+**cURL Example:**
+```bash
+curl -X POST http://142.93.189.58:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "your_password"
+  }'
+```
+
+**Success Response:**
+```json
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGc...",
+  "token_type": "Bearer",
+  "expires_in": 3600
+}
+```
+
+---
+
+### Store Email
+
+Create a new email record with parsed content.
+
+**Endpoint:** `POST /emails`
+
+**Headers:**
+```
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {your_access_token}
+```
+
+**Request Body:**
+```json
+{
+  "affiliate_id": 999,
+  "envelope": "{\"to\":[\"test@analyze.inflektion.ai\"],\"from\":\"sender@test.com\"}",
+  "from": "Test Sender <sender@test.com>",
+  "subject": "Test Email Subject",
+  "dkim": "{@test.com : pass}",
+  "SPF": "pass",
+  "spam_score": 0.5,
+  "email": "From: sender@test.com\r\nTo: test@analyze.inflektion.ai\r\nSubject: Test Email Subject\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nThis is a test email body.\r\n\r\nBest regards,\r\nTest Sender",
+  "sender_ip": "192.168.1.100",
+  "to": "test@analyze.inflektion.ai",
+  "timestamp": 1709200000
+}
+```
+
+**cURL Example:**
+```bash
+curl -i -X POST "http://142.93.189.58:8000/api/emails" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer your_access_token_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "affiliate_id": 999,
+    "envelope": "{\"to\":[\"test@analyze.inflektion.ai\"],\"from\":\"sender@test.com\"}",
+    "from": "Test Sender <sender@test.com>",
+    "subject": "Test Email Subject",
+    "dkim": "{@test.com : pass}",
+    "SPF": "pass",
+    "spam_score": 0.5,
+    "email": "From: sender@test.com\r\nTo: test@analyze.inflektion.ai\r\nSubject: Test Email Subject\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nThis is a test email body.\r\n\r\nBest regards,\r\nTest Sender",
+    "sender_ip": "192.168.1.100",
+    "to": "test@analyze.inflektion.ai",
+    "timestamp": 1709200000
+  }'
+```
+
+**Success Response:**
+```json
+{
+  "id": 406,
+  "affiliate_id": 999,
+  "from": "Test Sender <sender@test.com>",
+  "to": "test@analyze.inflektion.ai",
+  "subject": "Test Email Subject",
+  "raw_text": "This is a test email body.\n\nBest regards,\nTest Sender",
+  "created_at": "2024-03-01T12:00:00.000000Z",
+  "updated_at": "2024-03-01T12:00:00.000000Z"
+}
+```
+
+---
+
+### Read Email
+
+Retrieve a specific email by ID.
+
+**Endpoint:** `GET /emails/{id}`
+
+**Headers:**
+```
+Accept: application/json
+Authorization: Bearer {your_access_token}
+```
+
+**cURL Example:**
+```bash
+curl -i -X GET "http://142.93.189.58:8000/api/emails/406" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer your_access_token_here"
+```
+
+**Success Response:**
+```json
+{
+  "id": 406,
+  "affiliate_id": 999,
+  "envelope": "{\"to\":[\"test@analyze.inflektion.ai\"],\"from\":\"sender@test.com\"}",
+  "from": "Test Sender <sender@test.com>",
+  "subject": "Test Email Subject",
+  "dkim": "{@test.com : pass}",
+  "SPF": "pass",
+  "spam_score": 0.5,
+  "email": "From: sender@test.com...",
+  "sender_ip": "192.168.1.100",
+  "to": "test@analyze.inflektion.ai",
+  "timestamp": 1709200000,
+  "raw_text": "This is a test email body.\n\nBest regards,\nTest Sender",
+  "created_at": "2024-03-01T12:00:00.000000Z",
+  "updated_at": "2024-03-01T12:00:00.000000Z"
+}
+```
+
+---
+
+### Update Email
+
+Update an existing email record.
+
+**Endpoint:** `PUT /emails/{id}` or `PATCH /emails/{id}`
+
+**Headers:**
+```
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {your_access_token}
+```
+
+**Request Body** (all fields are optional):
+```json
+{
+  "affiliate_id": 1000,
+  "envelope": "{\"to\":[\"updated@example.com\"],\"from\":\"sender@test.com\"}",
+  "from": "Updated Sender <sender@test.com>",
+  "subject": "Updated Subject",
+  "dkim": "{@test.com : pass}",
+  "SPF": "pass",
+  "spam_score": 0.3,
+  "email": "Updated email content...",
+  "sender_ip": "192.168.1.101",
+  "to": "updated@example.com",
+  "timestamp": 1709200100,
+  "raw_text": "Updated plain text content"
+}
+```
+
+**cURL Example:**
+```bash
+curl -i -X PUT "http://142.93.189.58:8000/api/emails/406" \
+  -H "Accept: application/json" \
+  -H "Authorization: Bearer your_access_token_here" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "subject": "Updated Subject",
+    "spam_score": 0.3
+  }'
+```
+
+**Validation Rules:**
+
+| Field | Type | Required | Constraints |
+|-------|------|----------|-------------|
+| `affiliate_id` | integer | optional | min: 1 |
+| `envelope` | string | optional | - |
+| `from` | string | optional | max: 255 |
+| `subject` | string | optional | max: 1000 |
+| `dkim` | string | nullable | max: 255 |
+| `SPF` | string | nullable | max: 255 |
+| `spam_score` | numeric | nullable | min: 0, max: 100 |
+| `email` | string | optional | - |
+| `sender_ip` | string | nullable | valid IP address |
+| `to` | string | optional | - |
+| `timestamp` | integer | optional | min: 0 |
+| `raw_text` | string | nullable | - |
+
+**Success Response:**
+```json
+{
+  "id": 406,
+  "affiliate_id": 1000,
+  "subject": "Updated Subject",
+  "spam_score": 0.3,
+  "updated_at": "2024-03-01T12:30:00.000000Z"
+}
+```
+
+---
+
+## 📝 Request Examples
+
+### Complete Workflow Example
+
+```bash
+# 1. Login and get token
+TOKEN=$(curl -s -X POST http://142.93.189.58:8000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"password"}' \
+  | jq -r '.access_token')
+
+# 2. Store new email
+EMAIL_ID=$(curl -s -X POST http://142.93.189.58:8000/api/emails \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "affiliate_id": 999,
+    "from": "sender@test.com",
+    "to": "recipient@test.com",
+    "subject": "Test",
+    "email": "Test content",
+    "timestamp": 1709200000
+  }' | jq -r '.id')
+
+# 3. Read the email
+curl -X GET "http://142.93.189.58:8000/api/emails/$EMAIL_ID" \
+  -H "Authorization: Bearer $TOKEN"
+
+# 4. Update the email
+curl -X PUT "http://142.93.189.58:8000/api/emails/$EMAIL_ID" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"spam_score": 0.1}'
+```
+
+---
+
+## 🛠️ Features
+
+- **Advanced Email Parsing**: Supports multipart MIME, base64, quoted-printable encoding
+- **HTML to Plain Text**: Automatic conversion with proper formatting preservation
+- **Authentication**: Token-based API authentication
+- **Validation**: Comprehensive request validation
+- **Error Handling**: Detailed error messages and logging
+
+---
+
+## 📄 License
+
+This project is open-sourced software licensed under the [MIT license](LICENSE).
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+---
+
+## 📧 Support
+
+For issues and questions, please use the [GitHub Issues](https://github.com/Olejs/emails-parser/issues) page.
