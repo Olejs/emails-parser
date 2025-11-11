@@ -45,7 +45,7 @@ class UpdateEmailRequest extends FormRequest
             'sender_ip' => ['nullable', 'ip'],
             'to' => ['sometimes', 'string'],
             'timestamp' => ['sometimes', 'integer', 'min:0'],
-            'raw_text' => ['required', 'string'],
+            'raw_text' => ['nullable', 'string'],
         ];
     }
 }

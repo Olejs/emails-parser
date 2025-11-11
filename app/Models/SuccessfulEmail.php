@@ -53,6 +53,10 @@ class SuccessfulEmail extends Model
         'timestamp',
     ];
 
+    protected $attributes = [
+        'raw_text' => '',
+    ];
+
     protected $casts = [
         'envelope' => EmailEnvelopeCast::class,
         'spam_score' => 'float',

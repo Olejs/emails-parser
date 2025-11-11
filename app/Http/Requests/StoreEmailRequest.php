@@ -47,7 +47,7 @@ class StoreEmailRequest extends FormRequest
             'sender_ip' => ['nullable', 'ip'],
             'to' => ['required', 'string'],
             'timestamp' => ['required', 'integer', 'min:0'],
-            'raw_text' => ['required', 'string'],
+            'raw_text' => ['nullable', 'string'],
         ];
     }
 }
